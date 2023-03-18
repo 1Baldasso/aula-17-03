@@ -13,6 +13,12 @@ import {
   updateDoc,
   onSnapshot
 } from 'firebase/firestore'
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged
+} from 'firebase/auth'
 
 export default function App()
 {
