@@ -11,7 +11,8 @@ import {
   getDoc,
   getDocs,
   updateDoc,
-  onSnapshot
+  onSnapshot,
+  deleteDoc
 } from 'firebase/firestore'
 import {
   createUserWithEmailAndPassword,
@@ -19,6 +20,7 @@ import {
   signOut,
   onAuthStateChanged
 } from 'firebase/auth'
+import './App.css'
 
 export default function App()
 {
@@ -100,7 +102,7 @@ export default function App()
 
   async function deletePost(idDoPost){
     const docRef = doc(db,'posts',idDoPost);
-    await deletePost(docRef).then(()=>{
+    await deleteDoc(docRef).then(()=>{
       console.log("Post deletado com sucesso!");
       clearFields();
     }).catch((error)=>{
