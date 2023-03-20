@@ -87,7 +87,7 @@ export default function App()
   async function editPost()
   {
     const docRef = doc(db,"posts",idPost);
-    await updateDoc(docref,{
+    await updateDoc(docRef,{
       titulo: titulo,
       autor: autor
     }).then(()=>{
@@ -98,8 +98,8 @@ export default function App()
     })
   }
 
-  async function deletePost(id){
-    const docRef = doc(db,'posts',id);
+  async function deletePost(idDoPost){
+    const docRef = doc(db,'posts',idDoPost);
     await deletePost(docRef).then(()=>{
       console.log("Post deletado com sucesso!");
       clearFields();
@@ -107,4 +107,50 @@ export default function App()
       throwError(error);
     })
   }
+
+  return(
+    <div>
+      <h1>REACTJS + FIREBASE :)</h1>
+      <div className="container">
+        <h2>POSTS</h2>
+        <label>Id do Post</label>
+        <input
+        placeholder="Digite o Id do Post"
+        value={idPost}
+        onChange={(content)=>{setIdPost(content.target.value)}}/>
+        <br/>
+        <label>Título:</label>
+        <input
+        type="text"
+        placeholder="Digite o título"
+        value={titulo}
+        onChange={(content)=>setTitulo(content.target.value)}
+        />
+        <br/>
+        <label>Autor: </label>
+        <input
+        type="text"
+        placeholder="Digite o autor"
+        value={autor}
+        onChange={(content)=>setAutor(content.target.value)}
+        />
+        <br/>
+        <button onClick={addPost}>Cadastrar</button>
+        <button onClick={searchPost}>Buscar</button>
+        <button onClick={editPost}>Editar</button>
+        <ul>
+          {posts.map((post) => {
+            return(
+              <li key={post.id}>
+                <strong>ID: {post.id}</strong><br/>
+                <span>Título: {post.titulo}</span><br/>
+                <span>Autor: {post.autor}</span><br/>
+                <button onClick={()=>deletePost(post.id)}>Delete</button>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    </div>
+  );
 }
