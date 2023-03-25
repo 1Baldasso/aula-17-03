@@ -26,14 +26,26 @@ export default function App()
 {
   const [titulo, setTitulo] = useState('');
   const [autor, setAutor] = useState('');
-  const[idPost , setIdPost] = useState('');
+  const [idPost , setIdPost] = useState('');
+
+  const [posts, setPosts] = useState([]);
+  
+  const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
+  
+  const [user, setUser] = useState(false);
+  const [userDetail, setUserDetail] = useState({});
+
   function throwError(error){console.log("Erro:",error)};
   function clearFields(){
     setAutor('');
     setTitulo('');
     setIdPost('');
   }
-  const [posts, setPosts] = useState([]);
+  function clearAuthFields(){
+    setEmail('');
+    setSenha('');
+  }
   useEffect( () => {
     async function loadPosts(){
       const dados = onSnapshot(collection(db,"posts"),(snapshot) => {
@@ -53,6 +65,23 @@ export default function App()
 
     loadPosts();
   }, []);
+  useEffect( () => {
+    async function checkLogin(){
+      onAuthStateChanged(auth, (user) => {
+        if(user){
+          setUser(true);
+          setUserDetail({
+            uid: user.uid,
+            email: user.email
+          })
+        }else{
+          setUser(false);
+          setUserDetail({});
+        }
+      })
+    }
+    checkLogin();
+  },[]);
 
   async function searchPost()
   {
@@ -107,6 +136,38 @@ export default function App()
       clearFields();
     }).catch((error)=>{
       throwError(error);
+    })
+  }
+  // Funções de Autenticação
+  async function newUser(){
+    await createUserWithEmailAndPassword(auth,email,senha)
+    .then((user)=>{
+      console.log("Usuário criado com sucesso!");
+      clearAuthFields();
+    }).catch((error)=>{
+      if(error.code === 'auth/weak-password')
+        alert("Senha fraca!");
+      else if(error.code === 'auth/email-already-in-use')
+        alert("Email já cadastrado!");
+      else
+        throwError(error);
+    })
+  }
+
+  async function login(){
+    await signInWithEmailAndPassword(auth,email,senha)
+    .then((data)=>{
+      setUser(true);
+      setUserDetail({
+        uid: data.user.uid,
+        email: data.user.email
+      })
+      clearAuthFields();
+    }).catch((error)=>{
+      if(error.code === 'auth/wrong-password' || error.code === 'auth/invalid-email' || error.code === 'auth/user-not-found')
+        alert("Dados de login incorreta!");
+      else
+        throwError(error);
     })
   }
 
