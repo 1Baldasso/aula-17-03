@@ -82,7 +82,7 @@ export default function App()
     }
     checkLogin();
   },[]);
-
+//#region Posts
   async function searchPost()
   {
     const postRef = collection(db,"posts");
@@ -153,7 +153,9 @@ export default function App()
         throwError(error);
     })
   }
+//#endregion
 
+//#region Autenticação
   async function login(){
     await signInWithEmailAndPassword(auth,email,senha)
     .then((data)=>{
@@ -170,6 +172,16 @@ export default function App()
         throwError(error);
     })
   }
+
+  async function logout(){
+    await signOut(auth).then(()=>{
+      setUser(false);
+      setUserDetail({});
+    }).catch((error)=>{
+      throwError(error);
+    })
+  }
+//#endregion
 
   return(
     <div>
